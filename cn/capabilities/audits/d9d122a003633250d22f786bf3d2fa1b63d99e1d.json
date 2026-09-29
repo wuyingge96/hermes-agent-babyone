@@ -1,0 +1,595 @@
+{
+  "audit_kind": "static-source-evidence",
+  "capabilities": [
+    {
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract"],
+      "evidence": [
+        {
+          "label": "serve command",
+          "match_count": 3,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/subcommands/dashboard.py:59:    parser.set_defaults(func=cmd_dashboard, no_open=True, headless_backend=True, command=\"serve\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/subcommands/dashboard.py:62:def build_serve_parser(",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/subcommands/dashboard.py:96:        \"serve\","
+          ],
+          "paths": [
+            "hermes_cli/subcommands/dashboard.py"
+          ],
+          "pattern": "build_serve_parser|\\\"serve\\\""
+        },
+        {
+          "label": "server entry point",
+          "match_count": 1,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_server.py:1499:def start_server("
+          ],
+          "paths": [
+            "hermes_cli/web_server.py"
+          ],
+          "pattern": "def start_server"
+        },
+        {
+          "label": "status route",
+          "match_count": 9,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:1:\"\"\"Status dashboard routes: health, /api/status, system stats, curator, learning graph,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:77:    /api/status never routinely writes to state.db while another Hermes process uses it.\"\"\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:80:    # /api/status polls would otherwise create state.db before the user's first session.",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:99:        _log.debug(\"/api/status active session count exceeded %.2fs; returning 0\",",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:102:        _log.debug(\"/api/status active session count unavailable: %s\", exc)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:238:# /api/status keeps the exact zero-arg call so its behavior (and cache signature) is unchanged. The",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:251:            _log.warning(\"/api/status gateway health probe exceeded %.2fs; using local status\",",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:283:    home); plain /api/status keeps the exact zero-arg call so its cache signature is"
+          ],
+          "paths": [
+            "hermes_cli/web_routers/status.py"
+          ],
+          "pattern": "/api/status"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "runtime.startup",
+      "notes": "Frozen runtime startup and health routes passed in the runtime contract.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract"],
+      "evidence": [
+        {
+          "label": "dashboard token",
+          "match_count": 5,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/env_loader.py:58:# a link-style launcher spawns `hermes dashboard` with a fresh HERMES_DASHBOARD_SESSION_TOKEN and keeps",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/env_loader.py:62:_SPAWN_CREDENTIAL_KEYS: frozenset[str] = frozenset({\"HERMES_DASHBOARD_SESSION_TOKEN\"})",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_server.py:351:# HERMES_DASHBOARD_SESSION_TOKEN; otherwise fresh per server start. It dies with",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_server.py:354:    return os.environ.get(\"HERMES_DASHBOARD_SESSION_TOKEN\") or secrets.token_urlsafe(32)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_server.py:545:        and bool(os.environ.get(\"HERMES_DASHBOARD_SESSION_TOKEN\") or ssh_session_token or ssh_owner_nonce)"
+          ],
+          "paths": [
+            "hermes_cli/web_server.py",
+            "hermes_cli/env_loader.py"
+          ],
+          "pattern": "HERMES_DASHBOARD_SESSION_TOKEN"
+        },
+        {
+          "label": "gateway auth gate",
+          "match_count": 329,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/dashboard_auth/__init__.py:1:\"\"\"Dashboard authentication provider framework. The auth gate engages only when the dashboard",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/dashboard_auth/__init__.py:4:register theirs via the plugin hook ``ctx.register_dashboard_auth_provider``).\"\"\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/dashboard_auth/__init__.py:5:from hermes_cli.dashboard_auth.base import (",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/dashboard_auth/__init__.py:9:# Dashboard-auth providers are persistent host-owned registrations that deliberately survive a routine",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/dashboard_auth/__init__.py:10:# manager unload (#91701), so the \"clean slate\" reset must drop the process-global auth registry explicitly",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/dashboard_auth/__init__.py:12:from hermes_cli.dashboard_auth.registry import (",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/dashboard_auth/__init__.py:13:    register_provider, get_provider, list_providers, list_token_providers,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/dashboard_auth/__init__.py:20:    \"list_token_providers\", \"list_session_providers\", \"clear_providers\"]"
+          ],
+          "paths": [
+            "hermes_cli/web_routers/chat_ws.py",
+            "hermes_cli/dashboard_auth"
+          ],
+          "pattern": "auth|token"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "runtime.authentication",
+      "notes": "Frozen runtime REST and WebSocket token gates passed in the runtime contract.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract", "cn.contracts.test_interaction_contract.InteractionContractTests.test_prompt_stream_and_attachments"],
+      "evidence": [
+        {
+          "label": "WebSocket route",
+          "match_count": 1,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/chat_ws.py:593:@router.websocket(\"/api/ws\")"
+          ],
+          "paths": [
+            "hermes_cli/web_routers/chat_ws.py"
+          ],
+          "pattern": "@router\\.websocket\\(\\\"/api/ws\\\"\\)"
+        },
+        {
+          "label": "RPC dispatch",
+          "match_count": 16,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/rpc_dispatch.py:1:\"\"\"JSON-RPC admission and worker dispatch. Rebound onto the server namespace.\"\"\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/rpc_dispatch.py:8:def handle_request(req: dict) -> dict | None:",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/rpc_dispatch.py:45:def dispatch(req: dict, transport: Optional[Transport] = None) -> dict | None:",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/rpc_dispatch.py:63:            return handle_request(req)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/server.py:155:# \u2500\u2500 Async RPC dispatch: slow handlers (seconds to minutes) would leave approval.respond and",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/server.py:180:    \"command.dispatch\",  # /goal draft invokes the auxiliary model; never block the RPC reader",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/server.py:191:# JSON-RPC method being dispatched on this thread/task. Diagnostic only (names WHICH client",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/server.py:248:        # dispatched its preset NAME to the configured real provider and 402/503'd (#57283)."
+          ],
+          "paths": [
+            "tui_gateway/rpc_dispatch.py",
+            "tui_gateway/server.py"
+          ],
+          "pattern": "dispatch|handle_request"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "gateway.websocket",
+      "notes": "Frozen runtime WebSocket session and event contracts passed.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract", "cn.contracts.test_interaction_contract.InteractionContractTests.test_prompt_stream_and_attachments"],
+      "evidence": [
+        {
+          "label": "session create RPC",
+          "match_count": 19,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/common.py:65:    ``session.create`` / ``session.resume`` / ``session.activate`` results.\"\"\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/sessions.py:101:# \u2500\u2500 session.create \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/sessions.py:146:method(\"session.create\", params=SessionCreateParams, result=SessionCreateResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/hosted_room_server_rpc.py:60:        return self._call(\"session.create\", {",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_config_set.py:144:        # --global cannot persist profile defaults before session.create (#106397:",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_session.py:235:# \u2500\u2500 session.create / list / most_recent / facts \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_session.py:281:    \"\"\"Persist a seeded desktop branch child NOW (the one session.create exception to lazy rows): the",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_session.py:346:    \"\"\"``session.create``; ``copy_parent_history`` (``session.branch_stored``) reads the parent's"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "session\\.create"
+        },
+        {
+          "label": "session resume RPC",
+          "match_count": 37,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/AGENTS.md:28:`request.cancel` event; `open_requests(sid)` is what `session.resume` / `session.events.since` replay so a",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/AGENTS.md:84:| Session picker | `sessionPicker.tsx` | `session.list` / `session.resume` |",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/agent_callbacks.py:232:        # `write_json` off the stdio fallback \u2014 there is no `session.resume` for a closed sid.",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/common.py:65:    ``session.create`` / ``session.resume`` / ``session.activate`` results.\"\"\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/events.py:385:event(\"session.resume_progress\", SessionResumeProgressPayload, doc=\"Deferred resume hydration progress.\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/sessions.py:171:# \u2500\u2500 session.resume / activate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/sessions.py:193:method(\"session.resume\", params=SessionResumeParams, result=SessionResumeResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/hosted_room_server_rpc.py:65:        return self._call(\"session.resume\", {"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "session\\.resume"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "gateway.sessions",
+      "notes": "Frozen runtime session create/resume and prompt streaming passed.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "contract_tests": ["cn.contracts.test_interaction_contract.InteractionContractTests.test_prompt_stream_and_attachments"],
+      "evidence": [
+        {
+          "label": "prompt submit RPC",
+          "match_count": 46,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/AGENTS.md:80:| Chat streaming | `app.tsx` + `messageLine.tsx` | `prompt.submit` \u2192 `message.delta` / `message.complete` |",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/AGENTS.md:100:LIVE transport slot, so every authenticated reattach path (prompt.submit, queued drain,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/compute_host.py:234:            # prompt.submit before routing here). Install the inert borrow BEFORE the turn runs, or",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/compute_host_bridge.py:273:        # leave the session untouched so prompt.submit can fail open to the in-process path.",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/prompt_voice.py:16:# \u2500\u2500 prompt.submit \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/prompt_voice.py:76:method(\"prompt.submit\", params=PromptSubmitParams, result=PromptSubmitResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/host_supervisor.py:28:    \"prompt.submit\": \"turn-path\", \"session.interrupt\": \"turn-path\", \"reload.mcp\": \"run-concurrent\",",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/host_supervisor.py:30:    \"prompt.submit.truncate\": \"idle-gated\", \"slash.model\": \"idle-gated\","
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "prompt\\.submit"
+        },
+        {
+          "label": "prompt event names",
+          "match_count": 26,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/AGENTS.md:80:| Chat streaming | `app.tsx` + `messageLine.tsx` | `prompt.submit` \u2192 `message.delta` / `message.complete` |",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/agent_callbacks.py:25:_CHILD_DELTA_EVENTS = {\"subagent.thinking\": \"reasoning.delta\", \"subagent.text\": \"message.delta\",",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/agent_callbacks.py:26:                       \"subagent.start\": \"message.delta\"}",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/agent_callbacks.py:85:            _emit(\"message.complete\", csid, {\"text\": summary})",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/compute_host_bridge.py:246:        _emit(\"message.complete\", sid, {\"text\": f\"Error: {message}\", \"status\": \"error\"})",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/events.py:111:    \"\"\"``prompt_turn._invoke_agent._stream`` (message.delta: ``text`` + optional ``rendered``),",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/events.py:120:event(\"message.delta\", StreamDeltaPayload, doc=\"One streamed chunk of the assistant reply.\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/events.py:205:event(\"message.complete\", MessageCompletePayload, doc=\"The turn ended: final text, usage and outcome.\")"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "message\\.delta|message\\.complete"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "gateway.prompt",
+      "notes": "Frozen runtime prompt stream passed with the offline fake provider.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "evidence": [
+        {
+          "label": "approval server request",
+          "match_count": 1,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/server.py:816:    settle = server_requests.send_async(\"approval\", sid, payload, on_result)"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "server_request\\(\\\"approval\\\"\\)|send_async\\(\\\"approval\\\""
+        },
+        {
+          "label": "approval response",
+          "match_count": 7,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/groups_bot_relay.py:324:    \"\"\"``result`` is the local ``approval.respond`` answer or the peer's run-action receipt.\"\"\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/prompt_voice.py:329:method(\"approval.respond\", params=ApprovalRespondParams, result=ApprovalRespondResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/hosted_room_server_rpc.py:120:        return self._call(\"approval.respond\", {",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_prompt.py:1072:@method(\"approval.respond\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_prompt.py:1257:            logger.debug(\"approval.respond request_id fallback failed\", exc_info=True)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_prompt.py:1263:            logger.debug(\"approval.respond stored-id fallback failed\", exc_info=True)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/server.py:155:# \u2500\u2500 Async RPC dispatch: slow handlers (seconds to minutes) would leave approval.respond and"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "approval\\.respond"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "gateway.approvals",
+      "contract_tests": ["cn.contracts.test_interaction_contract.InteractionContractTests.test_prompt_stream_and_attachments", "cn.contracts.test_approval_fifo_contract.ApprovalFifoContractTests.test_unaddressed_responses_resolve_oldest_request_first"],
+      "notes": "Frozen runtime covers one approval request/deny round-trip, while the source queue contract proves two distinct pending requests resolve oldest-first without request IDs. The runtime executes a tool-call batch sequentially, so two concurrent WebSocket approval requests are not a reachable path for this commit.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "evidence": [
+        {
+          "label": "file attachment",
+          "match_count": 5,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/prompt_voice.py:182:method(\"file.attach\", params=FileAttachParams, result=FileAttachResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_prompt.py:845:@method(\"file.attach\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/prompt_attachments.py:101:    Read from THAT profile's config.yaml \u2014 ``file.attach`` runs before ``prompt.submit``",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/server.py:2169:# v2 file.attach; v3 approvals.mode RPCs + session.info reconciliation; v4 session.create fast=false = explicit normal tier;",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/server.py:2170:# v5 ws_max_size >16 MiB file.attach frames; v6 plugins.manage rows carry the canonical registry key;"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "file\\.attach"
+        },
+        {
+          "label": "image attachment",
+          "match_count": 6,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/prompt_voice.py:116:method(\"image.attach\", params=ImageAttachParams, result=AttachedImageResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/prompt_voice.py:130:method(\"image.attach_bytes\", params=ImageAttachBytesParams, result=AttachedImageResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/prompt_voice.py:131:       doc=\"Queue an image uploaded as base64 (remote client); reply mirrors image.attach.\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_prompt.py:728:@method(\"image.attach\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_prompt.py:756:@method(\"image.attach_bytes\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_prompt.py:758:    \"\"\"Attach an image from base64 bytes (remote client); reply mirrors ``image.attach``."
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "image\\.attach"
+        },
+        {
+          "label": "byte image attachment",
+          "match_count": 2,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/prompt_voice.py:130:method(\"image.attach_bytes\", params=ImageAttachBytesParams, result=AttachedImageResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_prompt.py:756:@method(\"image.attach_bytes\")"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "image\\.attach_bytes"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "gateway.attachments",
+      "contract_tests": ["cn.contracts.test_interaction_contract.InteractionContractTests.test_prompt_stream_and_attachments"],
+      "notes": "Frozen runtime file, image-path, image-bytes, and media response contract passed.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract"],
+      "evidence": [
+        {
+          "label": "status route",
+          "match_count": 9,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:1:\"\"\"Status dashboard routes: health, /api/status, system stats, curator, learning graph,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:77:    /api/status never routinely writes to state.db while another Hermes process uses it.\"\"\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:80:    # /api/status polls would otherwise create state.db before the user's first session.",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:99:        _log.debug(\"/api/status active session count exceeded %.2fs; returning 0\",",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:102:        _log.debug(\"/api/status active session count unavailable: %s\", exc)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:238:# /api/status keeps the exact zero-arg call so its behavior (and cache signature) is unchanged. The",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:251:            _log.warning(\"/api/status gateway health probe exceeded %.2fs; using local status\",",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/status.py:283:    home); plain /api/status keeps the exact zero-arg call so its cache signature is"
+          ],
+          "paths": [
+            "hermes_cli/web_routers/status.py"
+          ],
+          "pattern": "/api/status"
+        },
+        {
+          "label": "OpenAPI application",
+          "match_count": 1,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_server.py:342:app = FastAPI(title=\"Hermes Agent\", version=get_version_info().base_version, lifespan=_lifespan)"
+          ],
+          "paths": [
+            "hermes_cli/web_server.py"
+          ],
+          "pattern": "FastAPI\\("
+        }
+      ],
+      "evidence_status": "present",
+      "id": "rest.status",
+      "notes": "Frozen runtime verifies /api/status and /openapi.json readiness responses.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract"],
+      "evidence": [
+        {
+          "label": "session REST routes",
+          "match_count": 30,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/sessions.py:4:/api/sessions) mounts before the profiles ``sessions_router``, ``search_router``",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/sessions.py:46:# BEFORE the templated ``/api/sessions/{session_id}`` family. Starlette matches",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/sessions.py:48:# ``DELETE /api/sessions/empty`` would otherwise be taken as \"the session with",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/sessions.py:177:@list_router.get(\"/api/sessions\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/sessions.py:246:        _log.exception(\"GET /api/sessions failed\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/sessions.py:261:            _log.exception(\"GET /api/sessions failed\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/sessions.py:263:        _log.error(\"GET /api/sessions: state.db at %s is corrupt: %s\", db_path, exc)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/sessions.py:270:        _log.exception(\"GET /api/sessions failed\")"
+          ],
+          "paths": [
+            "hermes_cli/web_routers/sessions.py"
+          ],
+          "pattern": "/api/sessions"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "rest.sessions",
+      "notes": "Frozen runtime lists a created session, returns its seeded user message, deletes it, and returns 404 for its history afterward.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract"],
+      "evidence": [
+        {
+          "label": "config REST routes",
+          "match_count": 6,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/config_env.py:81:@config_router.get(\"/api/config\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/config_env.py:95:@config_router.get(\"/api/config/defaults\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/config_env.py:100:@config_router.get(\"/api/config/schema\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/config_env.py:118:@router.put(\"/api/config\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/config_env.py:156:    with http_failure(\"PUT /api/config failed\", 500, detail=\"Internal server error\"):",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/config_env.py:707:    rather than the process-level HERMES_HOME (mirrors ``/api/config``)."
+          ],
+          "paths": [
+            "hermes_cli/web_routers/config_env.py"
+          ],
+          "pattern": "/api/config"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "rest.config",
+      "notes": "Frozen runtime accepts the Electron-shaped SkillHub provider/model PUT and returns the provider fields and selected model on a subsequent authenticated GET. The GET normalizes model to a string.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract"],
+      "evidence": [
+        {
+          "label": "legacy toolset route",
+          "match_count": 8,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/tools.py:230:@router.get(\"/api/tools/toolsets\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/tools.py:280:@router.put(\"/api/tools/toolsets/{name}\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/tools.py:345:@router.get(\"/api/tools/toolsets/{name}/config\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/tools.py:421:@router.get(\"/api/tools/toolsets/{name}/models\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/tools.py:461:@router.put(\"/api/tools/toolsets/{name}/model\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/tools.py:493:@router.put(\"/api/tools/toolsets/{name}/provider\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/tools.py:574:@router.put(\"/api/tools/toolsets/{name}/env\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/web_routers/tools.py:615:@router.post(\"/api/tools/toolsets/{name}/post-setup\")"
+          ],
+          "paths": [
+            "hermes_cli/web_routers/tools.py"
+          ],
+          "pattern": "/api/tools/toolsets"
+        },
+        {
+          "label": "tool discovery",
+          "match_count": 3,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:model_tools.py:21:from tools.registry import CHECK_FN_CACHE_BYPASS, check_fn_cache_scope, discover_builtin_tools, registry, tool_error",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:model_tools.py:149:discover_builtin_tools()",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:model_tools.py:987:    \"\"\"{toolset: available_bool} for every registered toolset.\"\"\""
+          ],
+          "paths": [
+            "model_tools.py",
+            "hermes_cli/web_routers/tools.py"
+          ],
+          "pattern": "discover_builtin_tools|registered tools"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "rest.tools",
+      "notes": "Frozen runtime verifies the legacy toolset catalog and accepts the newer /api/tools fallback path.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "evidence": [
+        {
+          "label": "managed request middleware",
+          "match_count": 5,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/middleware.py:21:LLM_REQUEST_MIDDLEWARE = \"llm_request\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/middleware.py:88:def apply_llm_request_middleware(request: Dict[str, Any], **context: Any) -> RequestMiddlewareResult:",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/middleware.py:231:    return apply_llm_request_middleware(request, **context)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:plugins/observability/langfuse/__init__.py:784:def on_pre_llm_request(*, task_id: str = \"\", session_id: str = \"\", platform: str = \"\", model: str = \"\",",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:plugins/observability/langfuse/__init__.py:1036:        (\"pre_api_request\", on_pre_llm_request), (\"post_api_request\", on_post_llm_call),"
+          ],
+          "paths": [
+            "hermes_cli/middleware.py",
+            "plugins"
+          ],
+          "pattern": "llm_request"
+        },
+        {
+          "label": "session context",
+          "match_count": 612,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/middleware.py:111:    session_id = str(context.get(\"session_id\") or \"\")",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/middleware.py:113:    if session_id and not skip_relay:",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:hermes_cli/middleware.py:117:            session_id=session_id, tool_name=tool_name, args=current_args)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:run_agent.py:205:    return str(getattr(agent, \"session_id\", None) or id(agent))",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:run_agent.py:213:        _quietly(lambda: engine.on_session_end(agent.session_id or \"\", messages or []))",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:run_agent.py:276:        session_id: str = None,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:run_agent.py:295:        session_db=None, parent_session_id: str = None,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:run_agent.py:300:        pass_session_id: bool = False, requested_provider: str = None,"
+          ],
+          "paths": [
+            "hermes_cli/middleware.py",
+            "run_agent.py",
+            "tui_gateway"
+          ],
+          "pattern": "session_id"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "model.session_header",
+      "notes": "The real Desktop-managed plugin loads from a temporary Hermes home during the frozen interaction contract. Its local SkillHub URL gate is redirected to the offline fake provider, and the provider records X-Session-ID equal to session.create's stored_session_id on the actual prompt request.",
+      "patch_id": null,
+      "status": "packaged",
+      "contract_tests": ["cn.contracts.test_session_header_contract.SessionHeaderContractTests.test_managed_plugin_rewrites_only_skillhub_requests", "cn.contracts.test_interaction_contract.InteractionContractTests.test_prompt_stream_and_attachments"]
+    },
+    {
+      "evidence": [
+        {
+          "label": "MEDIA extraction",
+          "match_count": 58,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:822:    ``MEDIA:<root>/profiles/<other>/.env`` emitted in any profile's turn would upload it.\"\"\"",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1123:    # Docker agents emit MEDIA:/workspace/... \u2014 map container paths to host paths first.",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1216:# tuple: * ``extract_media()``       \u2014 explicit ``MEDIA:<path>`` tags * ``extract_local_files()`` \u2014 bare",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1219:# ``extract_local_files`` had a broad one. Combined with the unconditional ``MEDIA:\\\\s*\\\\S+`` cleanup at the",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1220:# dispatch sites, that mismatch created a silent black hole: a ``MEDIA:/report.md`` tag failed the narrow",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1242:# Anchored ``MEDIA:<path>`` cleanup pattern (dispatch path + streaming consumer). Strips only tags",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1246:# ``MEDIA:`` as a boundary so glued tags (``MEDIA:/a.pngMEDIA:/b.png``) never merge; sentence-final",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1249:# A ``MEDIA:`` tag with an unknown extension is left in the text so it can still be picked up by the"
+          ],
+          "paths": [
+            "gateway/run.py",
+            "gateway/platforms/base.py"
+          ],
+          "pattern": "MEDIA:"
+        },
+        {
+          "label": "MEDIA cleanup",
+          "match_count": 7,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1267:MEDIA_TAG_CLEANUP_RE = re.compile(",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1278:# Paths NOT covered by MEDIA_TAG_CLEANUP_RE's extension alternation \u2014 both extension-less files (Caddyfile,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:1415:    spans: list = [m.span() for m in MEDIA_TAG_CLEANUP_RE.finditer(masked)]",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:3227:        ``MEDIA_TAG_CLEANUP_RE`` would still match it and re-deliver a stale file. (Regression report",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:3263:        for match in MEDIA_TAG_CLEANUP_RE.finditer(scan_content):",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:3283:        removed unconditionally (as ``MEDIA_TAG_CLEANUP_RE``); extension-less tags only when",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:gateway/platforms/base.py:4394:            # shares MEDIA_TAG_CLEANUP_RE, so a MEDIA: tag with an unknown extension is intentionally left in"
+          ],
+          "paths": [
+            "gateway/platforms/base.py"
+          ],
+          "pattern": "MEDIA_TAG_CLEANUP_RE"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "response.media_protocol",
+      "contract_tests": ["cn.contracts.test_interaction_contract.InteractionContractTests.test_prompt_stream_and_attachments"],
+      "notes": "Frozen interaction runtime preserves a MEDIA:absolute-path artifact in the completed response.",
+      "patch_id": null,
+      "status": "packaged"
+    },
+    {
+      "evidence": [
+        {
+          "label": "command catalog RPC",
+          "match_count": 5,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/AGENTS.md:129:`commands.catalog` (empty-query list) and `complete.slash` (typed-query completions) already include",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/tools_commands.py:227:method(\"commands.catalog\", params=CommandsCatalogParams, result=CommandsCatalogResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_tools.py:413:    \"\"\"Accumulator for commands.catalog: ``pairs`` (every [key, desc]), ``canon`` (lowercase",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_tools.py:487:@_rpc(\"commands.catalog\", 5020)",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_tools.py:1338:    # Bound like ``commands.catalog``: an unbound rescan runs against the launch env, reports the session's"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "commands\\.catalog"
+        },
+        {
+          "label": "skills reload RPC",
+          "match_count": 2,
+          "matches": [
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/contracts/tools_mcp_plugins.py:233:method(\"skills.reload\", params=SkillsReloadParams, result=SkillsReloadResult,",
+            "d9d122a003633250d22f786bf3d2fa1b63d99e1d:tui_gateway/methods_tools.py:1336:@_rpc(\"skills.reload\", 5025)"
+          ],
+          "paths": [
+            "tui_gateway"
+          ],
+          "pattern": "skills\\.reload"
+        }
+      ],
+      "evidence_status": "present",
+      "id": "skills.catalog",
+      "contract_tests": ["cn.contracts.test_runtime_contract.RuntimeContractTests.test_frozen_runtime_contract"],
+      "notes": "Frozen runtime verifies commands.catalog and skills.reload JSON-RPC responses.",
+      "patch_id": null,
+      "status": "packaged"
+    }
+  ],
+  "catalog": "D:/BabybusFront/hermes-agent-babyone/cn/capabilities/catalog.yaml",
+  "catalog_sha256": "af20885558db62a78ea166c3c49d23f915854207cfb33fc83323e1c97427d805",
+  "generated_at": "2026-09-29T00:59:41.128100+00:00",
+  "schema_version": 1,
+  "source_commit": "d9d122a003633250d22f786bf3d2fa1b63d99e1d",
+  "source_request": "d9d122a0"
+}

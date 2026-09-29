@@ -1,0 +1,49 @@
+{
+  "python": {
+    "minimum": "3.14",
+    "maximum": "3.15"
+  },
+  "build_dependencies": [
+    "PyInstaller",
+    "psutil",
+    "ruamel.yaml",
+    "dotenv",
+    "fastapi",
+    "fire",
+    "httpx",
+    "openai",
+    "prompt_toolkit",
+    "pydantic",
+    "rich",
+    "uvicorn",
+    "websockets"
+  ],
+  "hidden_imports": [
+    "hermes_cli.web_server",
+    "hermes_cli.web_routers",
+    "hermes_cli.web_routers.chat_ws",
+    "hermes_cli.web_routers.config_env",
+    "hermes_cli.web_routers.sessions",
+    "hermes_cli.web_routers.status",
+    "hermes_cli.web_routers.tools",
+    "tui_gateway.server",
+    "tui_gateway.server_requests",
+    "tui_gateway.rpc_dispatch",
+    "tui_gateway.methods_prompt",
+    "tui_gateway.methods_tools",
+    "tools.registry",
+    "gateway.run",
+    "plugins.memory",
+    "plugins.web",
+    "plugins.dashboard_auth",
+    "plugins.image_gen"
+  ],
+  "data_packages": [
+    "hermes_cli",
+    "agent",
+    "gateway",
+    "tools",
+    "tui_gateway",
+    "plugins"
+  ]
+}

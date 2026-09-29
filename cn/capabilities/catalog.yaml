@@ -1,0 +1,309 @@
+schema_version: 2
+catalog_status: client-reconciled
+client:
+  name: erp-assistant-electron
+  repository: D:/BabybusFront/erp-assistant-electron
+  contract_evidence:
+    - docs/hermes-core-migration.md
+    - src/core/processManager.ts
+    - src/core/runtimeInstaller.ts
+    - src/core/gatewayClient.ts
+    - src/core/gatewayBridge.ts
+    - src/core/restClient.ts
+    - src/core/attachmentManager.ts
+    - src/core/agentImageManager.ts
+    - src/core/types.ts
+
+# This file describes requirements, not the result for one source revision.
+# `revision_status` must be audited again for every Hermes source commit.
+capabilities:
+  - id: runtime.startup
+    group: runtime
+    title: Headless local Core startup
+    requirement: >-
+      The frozen executable accepts `serve --host 127.0.0.1 --port <port>`,
+      starts without opening a browser, and exposes a local health endpoint.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - docs/hermes-core-migration.md:Core
+      - src/core/processManager.ts
+    contract_tests:
+      - startup_health_probe
+
+  - id: runtime.authentication
+    group: runtime
+    title: Dashboard session-token authentication
+    requirement: >-
+      Core accepts the `HERMES_DASHBOARD_SESSION_TOKEN` supplied by Main and
+      uses it for the local REST and WebSocket surfaces.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/processManager.ts
+      - src/core/gatewayClient.ts
+    contract_tests:
+      - token_required_for_rest_and_gateway
+
+  - id: gateway.websocket
+    group: gateway
+    title: JSON-RPC WebSocket gateway
+    requirement: >-
+      `GET /api/ws` supports authenticated JSON-RPC requests and asynchronous
+      session-scoped events used by the desktop client.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - docs/hermes-core-migration.md:Core
+      - src/core/gatewayClient.ts
+      - src/core/gatewayBridge.ts
+    contract_tests:
+      - gateway_session_round_trip
+
+  - id: gateway.sessions
+    group: gateway
+    title: Session create and resume
+    requirement: >-
+      The gateway supports `session.create` and `session.resume`, returns a
+      stable `session_id`, and preserves the conversation history expected by
+      the client session index.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/gatewayBridge.ts
+      - src/core/restClient.ts
+      - docs/hermes-core-migration.md:8E
+    contract_tests:
+      - session_create_resume_round_trip
+
+  - id: gateway.prompt
+    group: gateway
+    title: Prompt submission and streaming events
+    requirement: >-
+      `prompt.submit` accepts the client's session-scoped text and emits the
+      message/tool lifecycle events consumed by the local provider.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/gatewayBridge.ts
+      - src/core/types.ts
+    contract_tests:
+      - prompt_submit_event_sequence
+
+  - id: gateway.approvals
+    group: gateway
+    title: Tool-operation approval events
+    requirement: >-
+      Core sends the wire-level server request `approval` (normalized by the
+      Electron bridge as `approval.request`) and accepts `approval.respond`
+      with the choices used by the desktop approval UI. A stable approval
+      request ID is not currently required by the client and must not be
+      assumed.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified-with-limitation
+    revision_status: audit-required
+    evidence:
+      - src/core/gatewayBridge.ts
+      - docs/hermes-core-migration.md:4F
+    contract_tests:
+      - approval_request_response_fifo
+
+  - id: gateway.attachments
+    group: gateway
+    title: File and image attachment methods
+    requirement: >-
+      The gateway accepts `file.attach`, `image.attach`, and where available
+      `image.attach_bytes` for a staged local attachment and a valid session.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/attachmentManager.ts
+      - src/core/gatewayBridge.ts
+      - src/core/types.ts
+      - docs/hermes-core-migration.md:4A
+    contract_tests:
+      - attachment_attach_round_trip
+
+  - id: rest.status
+    group: rest
+    title: Runtime status and OpenAPI probes
+    requirement: >-
+      `GET /api/status` is the primary readiness probe and `/openapi.json` is
+      available as the client's fallback probe.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/processManager.ts
+      - docs/hermes-core-migration.md:1
+    contract_tests:
+      - status_and_openapi_probe
+
+  - id: rest.sessions
+    group: rest
+    title: Session history REST API
+    requirement: >-
+      The client can list sessions, read messages, and delete sessions through
+      the `/api/sessions` REST surface, with empty-history compatibility for
+      older runtimes.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/restClient.ts
+      - docs/hermes-core-migration.md:8G
+    contract_tests:
+      - session_rest_history_round_trip
+
+  - id: rest.config
+    group: rest
+    title: Provider and model configuration REST API
+    requirement: >-
+      `/api/config` supports the provider/model data written by the Main
+      process, including the fixed SkillHub OpenAI-compatible provider.
+    owner: core
+    delivery: configured-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/restClient.ts
+      - src/core/providerBootstrap.ts
+      - docs/hermes-core-migration.md:Core
+    contract_tests:
+      - skillhub_provider_config_round_trip
+
+  - id: rest.tools
+    group: rest
+    title: Read-only registered tool catalog
+    requirement: >-
+      `/api/tools` returns the registered tool catalog; older runtimes may be
+      handled through the client's `/api/tools/toolsets` fallback.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified-with-fallback
+    revision_status: audit-required
+    evidence:
+      - src/core/restClient.ts
+      - docs/hermes-core-migration.md:8H
+    contract_tests:
+      - tools_catalog_legacy_fallback
+
+  - id: model.session_header
+    group: model
+    title: Persistent SkillHub session identity
+    requirement: >-
+      The managed `llm_request` plugin can receive the persistent Hermes
+      `agent.session_id` and inject it into requests to the fixed SkillHub
+      provider without exposing credentials to the renderer.
+    owner: client-and-managed-plugin
+    delivery: plugin-and-config
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - docs/hermes-core-migration.md:Core
+      - src/core/managedPluginInstaller.ts
+      - src/core/providerBootstrap.ts
+    contract_tests:
+      - managed_llm_request_session_header
+
+  - id: response.media_protocol
+    group: response
+    title: Local media artifact output
+    requirement: >-
+      Agent responses may contain `MEDIA:<absolute path>` artifacts that the
+      client can safely validate and present through its Main-process media
+      bridge. Core must preserve the emitted path and response text.
+    owner: core-and-client
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/agentImageManager.ts
+      - docs/hermes-core-migration.md:4D
+      - docs/hermes-core-migration.md:4E
+    contract_tests:
+      - media_artifact_response_preserved
+
+  - id: skills.catalog
+    group: skills
+    title: Skills and commands discovery
+    requirement: >-
+      Core exposes the skill/command catalog and supports `skills.reload` so
+      the client can manage the current Profile's enabled skills.
+    owner: core
+    delivery: native-or-patch
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/gatewayBridge.ts
+      - docs/hermes-core-migration.md:8H
+    contract_tests:
+      - skill_catalog_reload
+
+  - id: packaging.pyinstaller_runtime
+    group: packaging
+    title: Portable PyInstaller runtime
+    requirement: >-
+      The overlay can freeze the selected source commit into a standalone
+      executable for Windows x64, macOS arm64, and macOS x64, with frozen
+      imports verified by launching the artifact.
+    owner: cn-overlay
+    delivery: packaged
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - docs/hermes-core-migration.md:1
+      - resources/bundled-runtime/README.md
+      - docs/ci-packaging.md
+    contract_tests:
+      - packaged_runtime_smoke
+
+  - id: packaging.manifest
+    group: packaging
+    title: Runtime manifest and provenance
+    requirement: >-
+      Each artifact ships a schemaVersion 2 manifest containing runtime and
+      kernel versions, platform, architecture, SHA-256, and source provenance
+      sufficient for the Electron installer to reject mismatched artifacts.
+    owner: cn-overlay
+    delivery: packaged
+    client_status: verified
+    revision_status: audit-required
+    evidence:
+      - src/core/runtimeInstaller.ts
+      - src/core/types.ts
+      - resources/bundled-runtime/README.md
+    contract_tests:
+      - manifest_digest_and_provenance
+
+  - id: packaging.python_environment
+    group: packaging
+    title: Managed skill Python environment
+    requirement: >-
+      The client receives a separate CPython archive, venv, wheelhouse, and
+      managed plugins. These are client-owned assets and are not part of the
+      Hermes Core runtime overlay.
+    owner: client
+    delivery: client-owned
+    client_status: verified
+    revision_status: not-applicable
+    evidence:
+      - docs/hermes-core-migration.md:1A
+      - resources/bundled-runtime/README.md
+    contract_tests:
+      - client_python_runtime_separation
